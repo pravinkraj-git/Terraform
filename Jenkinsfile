@@ -1,34 +1,29 @@
-pipeline{
+pipeline {
     agent any
 
-        tools{
-            terraform 'terraform'
+    stages {
+        stage('checkout') {
+            steps {
+                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/pravinkraj-git/Terraform']])
+            }
         }
         
-        stages{
-            stage("AWS Instance"){
-                steps{
-                    withCredentials([[
-                        $class: 'AmazonWebServicesCredentialsBiniding',
-                        credentials: 'AWS-Jenkins'
-                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']])
-                }
+        stage('init') {
+            steps {
+                sh ('terraform init')
             }
-            stage("checkout from GIT"){
-                steps{
-                   checkout scm 
-                }
+        }
+        
+        stage('plan') {
+            steps {
+                sh ('terraform plan')
             }
-            stage("Terraform"){
-                steps{
-                    sh 'terraform init'
-                }
-            }
-            stage("terraform apply"){
-                steps{
-                    sh 'terraform apply --auto-approve'
-                }
+        }
+        
+        stage('apply') {
+            steps {
+                sh ('terraform apply --auto-approve')
             }
         }
     }
+}
