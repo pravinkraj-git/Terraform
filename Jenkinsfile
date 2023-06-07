@@ -17,7 +17,7 @@ pipeline{
             }
             stage("checkout from GIT"){
                 steps{
-                    git credentialsId: 'db6fd54f-98bc-4899-aba1-ff2bc4bf57c5', url: 'https://github.com/pravinkraj-git/Terraform.git'
+                   checkout scm 
                 }
             }
             stage("Terraform"){
